@@ -1,5 +1,5 @@
 REM RENCapsulate with TimeCode
-REM very simple script to rencapsulate video file adsding time code based on the original encoding data using ffprobe and ffmpeg By Paolo Rudelli - Version 0.01 - 10/12/2019
+REM very simple script to rencapsulate video file adding time code based on the original encoding data using ffprobe and ffmpeg By Paolo Rudelli - Version 0.01 - 10 Aprile 2021
 REM GPL license V3 : http://www.gnu.org/licenses/gpl.txt
 REM for update check https://github.com/MrWu-at-msv/RENCTC
 REM if you find a bug please email me at info /at/ paolorudelli /dot/ com
