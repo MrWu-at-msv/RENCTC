@@ -39,6 +39,7 @@ set TIMEVIDEO=!TIMEVIDEO:~11,8!
 REM append data only ff : for nopn drop ; for drop
 REM TODO check FPS for drop or not drop frame syntax 
 set framewithseparator=:00
+REM use -> set framewithseparator=;00 for drop time code, frame rate 30000/1001 and 60000/1001
 set TIMEVIDEO=!TIMEVIDEO!!framewithseparator!
 echo !TIMEVIDEO!
 
