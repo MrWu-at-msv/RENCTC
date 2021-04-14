@@ -33,7 +33,7 @@ REM retreive the saved time into a variable
 set /p TIMEVIDEO=<timetemp.txt
 echo %!TIMEVIDEO!
 
-REM extract only the time
+REM extract only the time (work with standard mp4 Encoded date format YYYY-MM-DDTHH:MM:SS.000000Z)
 set TIMEVIDEO=!TIMEVIDEO:~11,8!
 
 REM append data only ff : for nopn drop ; for drop
