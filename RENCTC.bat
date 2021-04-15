@@ -15,7 +15,7 @@ set OUTPUTDIR=TCconverted
 mkdir %OUTPUTDIR%
 
 
-for %%a in ("*.MP4" "*.MTS" "*.MOV") do (
+for %%a in ("*.MP4" "*.MOV") do (
 echo %%a
 set  FILEINPUT=%%a
 ECHO !FILEINPUT!
