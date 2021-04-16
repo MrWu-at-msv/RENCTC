@@ -1,4 +1,7 @@
 # RENCTC
+!!!!ATTENTION - this is not replacement for a proper timecode on your fottage, is just a workaround for compatibility with some software.
+If you need sync or a proper timecode use cameras that make proper TC or Timecode generators.!!!!
+
 A simple batch script to re encapsulate a video file adding Time Code into  metadata using FFMPEG
 RENCapsulate with TimeCode
 very simple script to rencapsulate video file adsding time code based on the original encoding data using ffprobe and ffmpeg 
