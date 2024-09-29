@@ -1,53 +1,68 @@
-REM RENCapsulate with TimeCode
-REM very simple script to rencapsulate video file adding time code based on the original encoding data using ffprobe and ffmpeg By Paolo Rudelli - Version 0.01 - 10 Aprile 2021
-REM GPL license V3 : http://www.gnu.org/licenses/gpl.txt
-REM for update check https://github.com/MrWu-at-msv/RENCTC
-REM if you find a bug please email me at info /at/ paolorudelli /dot/ com
-
 @ECHO OFF
-REM avoid %% inside a for or if statement solution read here: http://stackoverflow.com/questions/17601473/using-set-p-inside-an-if-statement
+
+REM Script information
+REM RENCTC: Timecode Workaround for Video Files
+REM Version: 0.01 - April 10, 2021
+REM By Paolo Rudelli
+REM GPL license V3: http://www.gnu.org/licenses/gpl.txt
+REM For updates, check: https://github.com/MrWu-at-msv/RENCTC
+REM For bugs, email: info@paolorudelli.com
+
+REM Enable delayed expansion for using variables within variables
 Setlocal EnableDelayedExpansion
-CLS
 
-REM variables 
+REM Define system path separator
 set SYSTEMSLASH=\
+
+REM Define output directory for timecode converted videos
 set OUTPUTDIR=TCconverted
-mkdir %OUTPUTDIR%
+mkdir %OUTPUTDIR%  ; Create output directory if it doesn't exist
 
+REM Loop through all MP4 and MOV files in the current directory
+for %%a in (*.MP4 *.MOV) do (
+  echo Processing: %%a
 
-for %%a in ("*.MP4" "*.MOV") do (
-echo %%a
-set  FILEINPUT=%%a
-ECHO !FILEINPUT!
-REM remove the extension
-set OUTPUTFILE=!OUTPUTDIR!!SYSTEMSLASH!TC_!FILEINPUT:~0,-4!.mov
-rem set OUTPUTFILE=%%~na
-echo !OUTPUTFILE!
+  REM Set current file as input
+  set FILEINPUT=%%a
+  echo Input file: !FILEINPUT!
 
-set TIMEVIDEO=0
-echo !TIMEVIDEO!
+  REM Create output filename with timestamp prefix in TCconverted directory
+  set OUTPUTFILE=!OUTPUTDIR!\TC_!FILEINPUT:~0,-4!.mov
 
-REM retreive creation data and save to a temp file
-ffprobe -v quiet -select_streams v:0  -show_entries stream_tags=creation_time -of default=noprint_wrappers=1:nokey=1 !FILEINPUT! > timetemp.txt
-REM retreive the saved time into a variable
-set /p TIMEVIDEO=<timetemp.txt
-echo %!TIMEVIDEO!
+  echo Output file: !OUTPUTFILE!
 
-REM extract only the time (work with standard mp4 Encoded date format YYYY-MM-DDTHH:MM:SS.000000Z)
-set TIMEVIDEO=!TIMEVIDEO:~11,8!
+  REM Initialize timecode variable
+  set TIMEVIDEO=0
+  echo Current timecode: !TIMEVIDEO!
 
-REM append data only ff : for nopn drop ; for drop
-REM TODO check FPS for drop or not drop frame syntax 
-set framewithseparator=:00
-REM use -> set framewithseparator=;00 for drop time code, frame rate 30000/1001 and 60000/1001
-set TIMEVIDEO=!TIMEVIDEO!!framewithseparator!
-echo !TIMEVIDEO!
+  REM Extract creation time from video file and store in temporary file
+  ffprobe -v quiet -select_streams v:0 -show_entries stream_tags=creation_time -of default=noprint_wrappers=1:nokey=1 "!FILEINPUT!" > timetemp.txt
 
-REM rencapsulate the original file with the TC
-ffmpeg.exe -i !FILEINPUT! -timecode !TIMEVIDEO! -c:v copy -c:a copy !OUTPUTFILE!
-ECHO !FILEINPUT! DONE!!
+  REM Read creation time from temporary file
+  set /p TIMEVIDEO=<timetemp.txt
+  echo Extracted time: %!TIMEVIDEO%!
+
+  REM Extract time portion (YYYY-MM-DDTHH:MM:SS.000000Z format)
+  set TIMEVIDEO=!TIMEVIDEO:~11,8!
+  echo Timecode: !TIMEVIDEO!
+
+  REM Append frame separator (colon for non-drop frame rates)
+  set framewithseparator=:00
+
+  ; Uncomment the following line if the video has a drop frame rate (30000/1001 or 60000/1001)
+  ; set framewithseparator=;00
+
+  REM Combine timecode with separator
+  set TIMEVIDEO=!TIMEVIDEO!!framewithseparator!
+  echo Timecode with separator: !TIMEVIDEO!
+
+  REM Re-encapsulate video with timecode using ffmpeg
+  ffmpeg.exe -i "!FILEINPUT!" -timecode "!TIMEVIDEO!" -c:v copy -c:a copy "!OUTPUTFILE!"
+
+  echo Finished processing: !FILEINPUT!
 )
 
-del timetemp.txt
-ECHO all done!!
+del timetemp.txt  ; Delete temporary file
+echo All files processed!
+
 pause
